@@ -7,12 +7,12 @@ const validate = require('./site-ingestion-schema/validator');
 console.log('Loading site ingestion API');
 
 
-// TODO: Update to handle events according to the CloudFlare Worker handlers
-// addEventListener()
-// https://developers.cloudflare.com/workers/tutorials/build-a-jamstack-app
-
 // TODO: Simplify handlers by splitting into particular functions
-exports.handler = async (event) => {
+addEventListener('fetch', event => {
+  event.respondWith(handleRequest(event.request))
+})
+
+async handleRequest(event) {
     console.log(`Request: ${JSON.stringify(event)}`);
 
     //TODO: Move validation closer to the response function
