@@ -1,4 +1,4 @@
-# Site Ingestion API
+# Site Ingress API
 
 A very basic site ingestion API hosted on AWS Lambda. It implements the handler function for the lambda webhook. This endpoint takes in a list of site JSON objects and batch pushes them to the Airtable.
 
