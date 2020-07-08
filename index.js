@@ -1,13 +1,21 @@
 'use strict';
 
 const pushToAirtable = require('./src/pushToAirtable');
+// TODO: use clearer name in place of validate
 const validate = require('./site-ingestion-schema/validator');
 
 console.log('Loading site ingestion API');
 
+
+// TODO: Update to handle events according to the CloudFlare Worker handlers
+// addEventListener()
+// https://developers.cloudflare.com/workers/tutorials/build-a-jamstack-app
+
+// TODO: Simplify handlers by splitting into particular functions
 exports.handler = async (event) => {
     console.log(`Request: ${JSON.stringify(event)}`);
 
+    //TODO: Move validation closer to the response function
     if (event.path !== '/form-upload' && event.path !== '/upload-site') {
         return {
             statusCode: 404,
@@ -31,7 +39,8 @@ exports.handler = async (event) => {
     try {
         body = JSON.parse(event.body);
 
-        // add workaround for FormAssembly data
+        //TODO: use switch-case
+        //TODO: add workaround for FormAssembly data
         if (event.path === '/form-upload') {
             sites = [body];
         } else if (event.path === '/upload-site') {

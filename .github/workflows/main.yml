@@ -1,8 +1,9 @@
 name: deploy to lambda
-on: 
+on:
   push:
     branches:
-      - prod 
+      - prod
+# TODO: update to push to cloudflare workers
 jobs:
   deploy_source:
     name: build and deploy lambda
