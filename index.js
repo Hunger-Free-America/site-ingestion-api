@@ -9,10 +9,10 @@ console.log('Loading site ingestion API');
 
 // TODO: Simplify handlers by splitting into particular functions
 addEventListener('fetch', event => {
-  event.respondWith(handleRequest(event.request))
-})
+    event.respondWith(handleRequest(event.request));
+});
 
-async handleRequest(event) {
+const handleRequest = async (event) => {
     console.log(`Request: ${JSON.stringify(event)}`);
 
     //TODO: Move validation closer to the response function
