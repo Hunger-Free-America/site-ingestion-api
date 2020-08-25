@@ -13,6 +13,7 @@ const updateMethod = 'Upload V4: github.com/COVID-basic-needs/site-ingestion-api
 module.exports = async (siteList, email, password) => {
   const base = new Airtable({
     apiKey: process.env.AIRTABLE_API_KEY
+  //TODO: check password against password database
   }).base(password === process.env.PW ? process.env.AIRTABLE_BASE_ID : process.env.TEST_BASE_ID);
 
   const sitesTable = base(process.env.AIRTABLE_SITES_TABLE);

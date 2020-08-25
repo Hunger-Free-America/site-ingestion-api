@@ -1,25 +1,27 @@
-name: deploy to lambda
-on: 
+name: deploy to cloudflare worker
+on:
   push:
     branches:
-      - prod 
+      - master
 jobs:
-  deploy_source:
-    name: build and deploy lambda
+  deploy_worker:
+    name: build and deploy cloudflare worker
     strategy:
       matrix:
         node-version: [12.x]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: npm install and build
+      - name: update submodules
         run: |
           git submodule init
           git submodule update --recursive
+      - name: npm install and build
+        run: |
           npm ci
           npm run build --if-present
         env:
@@ -29,10 +31,6 @@ jobs:
         with:
           args: zip -qq -r ./bundle.zip ./
       - name: default deploy
-        uses: appleboy/lambda-action@v0.0.4
+        uses: cloudflare/wrangler-action@12.0
         with:
-          aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws_region: us-west-2
-          function_name: site-ingestion-api
-          zip_file: bundle.zip
+          apiToken: ${{ secrets.CF_API_TOKEN }}

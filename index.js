@@ -1,40 +1,30 @@
 'use strict';
 
 const pushToAirtable = require('./src/pushToAirtable');
-const validate = require('./site-ingestion-schema/validator');
+const validateSchema = require('./site-ingestion-schema/validator');
 
 console.log('Loading site ingestion API');
 
-exports.handler = async (event) => {
+
+addEventListener('fetch', event => {
+    event.respondWith(handleRequest(event.request));
+});
+
+const
+
+const handleRequest = async (event) => {
     console.log(`Request: ${JSON.stringify(event)}`);
-
-    if (event.path !== '/form-upload' && event.path !== '/upload-site') {
-        return {
-            statusCode: 404,
-            body: JSON.stringify({
-                error: 'Unsupported endpoint'
-            })
-        };
-    }
-
-    if (!event.body || Object.keys(event.body).length === 0) {
-        return {
-            statusCode: 400,
-            body: JSON.stringify({
-                error: 'Empty payload'
-            })
-        };
-    }
 
     let sites;
     let body;
     try {
         body = JSON.parse(event.body);
 
-        // add workaround for FormAssembly data
-        if (event.path === '/form-upload') {
+        //TODO: add endpoint for FormAssembly and Typeform data
+        switch (event.path) {
+          case '/form-upload':
             sites = [body];
-        } else if (event.path === '/upload-site') {
+          case '/upload-site':
             if (!body.data || !Array.isArray(body.data) || body.data.length === 0) {
                 return {
                     statusCode: 400,
@@ -44,6 +34,13 @@ exports.handler = async (event) => {
                 };
             }
             sites = body.data;
+          default:
+            return {
+              statusCode: 404,
+              body: JSON.stringify({
+                error: 'Unsupported endpoint'
+              })
+            };
         }
     } catch (e) {
         console.log(`Invalid payload: ${body}`);
@@ -57,7 +54,7 @@ exports.handler = async (event) => {
     }
 
     // check if sites conform to schema
-    const [isValid, errorMsg] = validate(sites);
+    const [isValid, errorMsg] = validateSchema(sites);
     if (!isValid) {
         return {
             statusCode: 400,
